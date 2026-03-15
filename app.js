@@ -210,9 +210,11 @@ window.selectUser = function(user) {
     updateAutoDetectLabel();
 };
 
-// Update auto-detect label
+// Update auto-detect label and current user display
 function updateAutoDetectLabel() {
     const label = document.getElementById('auto-detect-label');
+    const userLabel = document.getElementById('current-user-label');
+
     if (label) {
         const wasAutoDetected = detectUser() !== null;
         if (wasAutoDetected) {
@@ -223,7 +225,27 @@ function updateAutoDetectLabel() {
             label.style.display = 'block';
         }
     }
+
+    if (userLabel) {
+        const emoji = currentUser === 'husband' ? '👨' : '👩';
+        const name = USERS[currentUser].name;
+        userLabel.textContent = `${emoji} ${name}`;
+    }
 }
+
+// Show/hide user toggle
+window.showUserToggle = function() {
+    const display = document.getElementById('user-display');
+    const container = document.getElementById('user-toggle-container');
+
+    if (container.classList.contains('hidden')) {
+        display.classList.add('hidden');
+        container.classList.remove('hidden');
+    } else {
+        display.classList.remove('hidden');
+        container.classList.add('hidden');
+    }
+};
 
 // Reset device mapping (for switching devices between users)
 function resetDeviceMapping() {
@@ -244,6 +266,14 @@ function resetDeviceMapping() {
 // Initialize user detection
 let currentUser = detectUser();
 
+// Migrate old localStorage to new device mapping system
+if (!currentUser && localStorage.getItem('currentUser')) {
+    const oldUser = localStorage.getItem('currentUser');
+    console.log('Migrating old user preference:', oldUser);
+    saveDeviceUserMapping(oldUser);
+    currentUser = oldUser;
+}
+
 // Show setup modal if no user detected
 if (!currentUser) {
     // Wait for DOM to be ready
@@ -253,10 +283,7 @@ if (!currentUser) {
         showUserSetupModal();
     }
     // Default to husband until user selects
-    currentUser = localStorage.getItem('currentUser') || 'husband';
-} else {
-    // Use detected user
-    currentUser = currentUser;
+    currentUser = 'husband';
 }
 
 // Portion calculations for household
@@ -1125,6 +1152,9 @@ document.addEventListener('DOMContentLoaded', () => {
             switchUser(user);
             // Update auto-detect label
             updateAutoDetectLabel();
+            // Hide toggle, show compact display
+            document.getElementById('user-display').classList.remove('hidden');
+            document.getElementById('user-toggle-container').classList.add('hidden');
         });
     });
 

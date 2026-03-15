@@ -154,19 +154,32 @@
 
                 <!-- User Switcher -->
                 <div class="flex-1 flex justify-center flex-col items-center">
-                    <div class="bg-white/20 rounded-full p-1 flex gap-1">
-                        <button id="switch-husband" class="user-switch-btn active px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="husband">
-                            👨 Husband
-                        </button>
-                        <button id="switch-wife" class="user-switch-btn px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="wife">
-                            👩 Wife
+                    <!-- Compact auto-detect display -->
+                    <div id="user-display" class="flex items-center gap-2">
+                        <div class="bg-white/20 rounded-full px-4 py-2">
+                            <span id="current-user-label" class="text-sm font-medium">👨 Husband</span>
+                        </div>
+                        <button onclick="showUserToggle()" class="text-white/70 hover:text-white transition-colors text-xs" title="Switch user">
+                            🔄
                         </button>
                     </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <p id="auto-detect-label" class="text-xs text-white/70">📱 Auto-detected</p>
-                        <button onclick="resetDeviceMapping()" class="text-white/50 hover:text-white/90 transition-colors" title="Reset device assignment">
-                            ⚙️
-                        </button>
+
+                    <!-- Expandable toggle (hidden by default) -->
+                    <div id="user-toggle-container" class="hidden">
+                        <div class="bg-white/20 rounded-full p-1 flex gap-1">
+                            <button id="switch-husband" class="user-switch-btn active px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="husband">
+                                👨 Husband
+                            </button>
+                            <button id="switch-wife" class="user-switch-btn px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="wife">
+                                👩 Wife
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1 justify-center">
+                            <p id="auto-detect-label" class="text-xs text-white/70">📱 Auto-detected</p>
+                            <button onclick="resetDeviceMapping()" class="text-white/50 hover:text-white/90 transition-colors text-xs" title="Reset device assignment">
+                                ⚙️
+                            </button>
+                        </div>
                     </div>
                 </div>
 
