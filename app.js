@@ -9,7 +9,7 @@ if ('serviceWorker' in navigator) {
 
 // Dark Mode Management
 function initDarkMode() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark mode
     setTheme(savedTheme);
 }
 
@@ -233,17 +233,22 @@ function updateAutoDetectLabel() {
     }
 }
 
-// Show/hide user toggle
-window.showUserToggle = function() {
-    const display = document.getElementById('user-display');
-    const container = document.getElementById('user-toggle-container');
+// Confirm user switch with dialog
+window.confirmUserSwitch = function() {
+    const otherUser = currentUser === 'husband' ? 'wife' : 'husband';
+    const otherEmoji = otherUser === 'husband' ? '👨' : '👩';
+    const otherName = USERS[otherUser].name;
 
-    if (container.classList.contains('hidden')) {
-        display.classList.add('hidden');
-        container.classList.remove('hidden');
-    } else {
-        display.classList.remove('hidden');
-        container.classList.add('hidden');
+    const confirmed = confirm(
+        `Switch to ${otherEmoji} ${otherName}'s profile?\n\n` +
+        `This will update the device mapping and show ${otherName}'s data.`
+    );
+
+    if (confirmed) {
+        saveDeviceUserMapping(otherUser);
+        currentUser = otherUser;
+        switchUser(otherUser);
+        updateAutoDetectLabel();
     }
 };
 
@@ -1188,20 +1193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('clear-history-btn').addEventListener('click', clearWeightHistory);
 
-    // User switcher
-    document.querySelectorAll('.user-switch-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const user = e.target.dataset.user;
-            // Update device mapping when manually switched
-            saveDeviceUserMapping(user);
-            switchUser(user);
-            // Update auto-detect label
-            updateAutoDetectLabel();
-            // Hide toggle, show compact display
-            document.getElementById('user-display').classList.remove('hidden');
-            document.getElementById('user-toggle-container').classList.add('hidden');
-        });
-    });
+    // User switcher is now handled by confirmUserSwitch() function
 
     // Dark mode toggle
     document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
