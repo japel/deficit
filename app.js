@@ -75,8 +75,189 @@ const USERS = {
     }
 };
 
-// Current active user
-let currentUser = localStorage.getItem('currentUser') || 'husband';
+// Device Fingerprint for automatic user detection
+function generateDeviceFingerprint() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.font = '14px Arial';
+    ctx.fillText('Device fingerprint', 2, 2);
+
+    const fingerprint = {
+        canvas: canvas.toDataURL(),
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        screenResolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        touchSupport: 'ontouchstart' in window
+    };
+
+    // Create a simple hash
+    const str = JSON.stringify(fingerprint);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString(36);
+}
+
+// Auto-detect user or prompt for first-time setup
+function detectUser() {
+    const deviceId = generateDeviceFingerprint();
+    const storedMapping = localStorage.getItem('deviceUserMapping');
+
+    if (storedMapping) {
+        const mapping = JSON.parse(storedMapping);
+        if (mapping[deviceId]) {
+            console.log('Detected user:', mapping[deviceId]);
+            return mapping[deviceId];
+        }
+    }
+
+    // First time on this device - show setup modal
+    return null;
+}
+
+// Save device-user mapping
+function saveDeviceUserMapping(user) {
+    const deviceId = generateDeviceFingerprint();
+    const storedMapping = localStorage.getItem('deviceUserMapping');
+    const mapping = storedMapping ? JSON.parse(storedMapping) : {};
+
+    mapping[deviceId] = user;
+    localStorage.setItem('deviceUserMapping', JSON.stringify(mapping));
+    localStorage.setItem('currentUser', user);
+}
+
+// Show first-time setup modal
+function showUserSetupModal() {
+    const modal = document.createElement('div');
+    modal.id = 'user-setup-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    `;
+
+    modal.innerHTML = `
+        <div style="background: var(--bg-secondary); border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <h2 style="color: var(--text-primary); font-size: 24px; margin-bottom: 16px; text-align: center;">👋 Welcome to Diet Dashboard!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px; text-align: center;">This device will be automatically associated with your profile.</p>
+
+            <div style="display: grid; gap: 12px;">
+                <button onclick="selectUser('husband')" style="
+                    background: linear-gradient(135deg, #3b82f6, #2563eb);
+                    color: white;
+                    border: none;
+                    padding: 20px;
+                    border-radius: 12px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    👨 Husband's Device
+                </button>
+
+                <button onclick="selectUser('wife')" style="
+                    background: linear-gradient(135deg, #ec4899, #db2777);
+                    color: white;
+                    border: none;
+                    padding: 20px;
+                    border-radius: 12px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    👩 Wife's Device
+                </button>
+            </div>
+
+            <p style="color: var(--text-tertiary); font-size: 12px; margin-top: 20px; text-align: center;">
+                ℹ️ You can change this later using the toggle in the header
+            </p>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+// Handle user selection from modal
+window.selectUser = function(user) {
+    saveDeviceUserMapping(user);
+    currentUser = user;
+
+    // Remove modal
+    const modal = document.getElementById('user-setup-modal');
+    if (modal) {
+        modal.remove();
+    }
+
+    // Update UI
+    switchUser(user);
+    updateAutoDetectLabel();
+};
+
+// Update auto-detect label
+function updateAutoDetectLabel() {
+    const label = document.getElementById('auto-detect-label');
+    if (label) {
+        const wasAutoDetected = detectUser() !== null;
+        if (wasAutoDetected) {
+            label.textContent = '📱 Auto-detected';
+            label.style.display = 'block';
+        } else {
+            label.textContent = '✋ Manually set';
+            label.style.display = 'block';
+        }
+    }
+}
+
+// Reset device mapping (for switching devices between users)
+function resetDeviceMapping() {
+    if (confirm('This will allow you to reassign this device to a different user. Continue?')) {
+        const deviceId = generateDeviceFingerprint();
+        const storedMapping = localStorage.getItem('deviceUserMapping');
+        if (storedMapping) {
+            const mapping = JSON.parse(storedMapping);
+            delete mapping[deviceId];
+            localStorage.setItem('deviceUserMapping', JSON.stringify(mapping));
+        }
+        localStorage.removeItem('currentUser');
+        // Reload page to show setup modal
+        location.reload();
+    }
+}
+
+// Initialize user detection
+let currentUser = detectUser();
+
+// Show setup modal if no user detected
+if (!currentUser) {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', showUserSetupModal);
+    } else {
+        showUserSetupModal();
+    }
+    // Default to husband until user selects
+    currentUser = localStorage.getItem('currentUser') || 'husband';
+} else {
+    // Use detected user
+    currentUser = currentUser;
+}
 
 // Portion calculations for household
 const HOUSEHOLD_PORTIONS = {
@@ -939,7 +1120,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.user-switch-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const user = e.target.dataset.user;
+            // Update device mapping when manually switched
+            saveDeviceUserMapping(user);
             switchUser(user);
+            // Update auto-detect label
+            updateAutoDetectLabel();
         });
     });
 
@@ -951,6 +1136,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update weight display on load
     updateWeightDisplay();
+
+    // Update auto-detect label
+    updateAutoDetectLabel();
 });
 
 // Tab Navigation

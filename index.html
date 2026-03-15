@@ -153,13 +153,19 @@
                 </div>
 
                 <!-- User Switcher -->
-                <div class="flex-1 flex justify-center">
+                <div class="flex-1 flex justify-center flex-col items-center">
                     <div class="bg-white/20 rounded-full p-1 flex gap-1">
                         <button id="switch-husband" class="user-switch-btn active px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="husband">
                             👨 Husband
                         </button>
                         <button id="switch-wife" class="user-switch-btn px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="wife">
                             👩 Wife
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <p id="auto-detect-label" class="text-xs text-white/70">📱 Auto-detected</p>
+                        <button onclick="resetDeviceMapping()" class="text-white/50 hover:text-white/90 transition-colors" title="Reset device assignment">
+                            ⚙️
                         </button>
                     </div>
                 </div>
