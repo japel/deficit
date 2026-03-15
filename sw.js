@@ -1,13 +1,14 @@
 // Service Worker for Diet Dashboard PWA
-const CACHE_NAME = 'diet-dashboard-v2';
+const CACHE_NAME = 'diet-dashboard-v3';
+const BASE_PATH = '/deficit/';
 const urlsToCache = [
-    './index.html',
-    './app.js',
-    './manifest.json',
-    './icon-192.png',
-    './icon-512.png',
-    './icon-maskable-192.png',
-    './icon-maskable-512.png'
+    BASE_PATH + 'index.html',
+    BASE_PATH + 'app.js',
+    BASE_PATH + 'manifest.json',
+    BASE_PATH + 'icon-192.png',
+    BASE_PATH + 'icon-512.png',
+    BASE_PATH + 'icon-maskable-192.png',
+    BASE_PATH + 'icon-maskable-512.png'
 ];
 
 // Install event - cache resources
