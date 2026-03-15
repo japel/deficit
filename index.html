@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10b981">
+    <title>Diet Dashboard - 83kg to 77kg</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #9ca3af;
+            --border-color: #4b5563;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .meal-card {
+            transition: all 0.3s ease;
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow-md);
+        }
+        .meal-card.prepped {
+            border-left: 4px solid #10b981;
+        }
+        [data-theme="dark"] .meal-card.prepped {
+            background-color: #1a3a2e;
+        }
+        [data-theme="light"] .meal-card.prepped {
+            background-color: #f0fdf4;
+        }
+        .macro-bar {
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #10b981;
+            color: #10b981;
+        }
+        .user-switch-btn {
+            opacity: 0.7;
+        }
+        .user-switch-btn.active {
+            background-color: white;
+            color: #059669;
+            opacity: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .user-switch-btn.active {
+            background-color: #374151;
+            color: #10b981;
+        }
+        .dark-mode-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            background-color: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .dark-mode-toggle:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        /* Dark mode for colored background boxes */
+        [data-theme="dark"] .bg-blue-50 {
+            background-color: #1e3a5f !important;
+        }
+        [data-theme="dark"] .bg-green-50 {
+            background-color: #1a3a2e !important;
+        }
+        [data-theme="dark"] .bg-purple-50 {
+            background-color: #2d1b4e !important;
+        }
+        [data-theme="dark"] .bg-orange-50 {
+            background-color: #3a2817 !important;
+        }
+        [data-theme="dark"] .bg-amber-50 {
+            background-color: #3a2a17 !important;
+        }
+        [data-theme="dark"] .bg-pink-50 {
+            background-color: #3a1729 !important;
+        }
+        [data-theme="dark"] .bg-red-50 {
+            background-color: #3a1717 !important;
+        }
+
+        /* Dark mode for colored borders */
+        [data-theme="dark"] .border-blue-200 {
+            border-color: #3b5a7f !important;
+        }
+        [data-theme="dark"] .border-green-200 {
+            border-color: #2d5a4e !important;
+        }
+        [data-theme="dark"] .border-purple-200 {
+            border-color: #4d3b6e !important;
+        }
+        [data-theme="dark"] .border-orange-200 {
+            border-color: #5a4837 !important;
+        }
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold">Diet Dashboard</h1>
+                    <p class="text-sm text-green-100" id="header-journey">83kg → 77kg Journey</p>
+                </div>
+
+                <!-- User Switcher -->
+                <div class="flex-1 flex justify-center">
+                    <div class="bg-white/20 rounded-full p-1 flex gap-1">
+                        <button id="switch-husband" class="user-switch-btn active px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="husband">
+                            👨 Husband
+                        </button>
+                        <button id="switch-wife" class="user-switch-btn px-4 py-2 rounded-full font-medium text-sm transition-all" data-user="wife">
+                            👩 Wife
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 text-right flex items-center justify-end gap-4">
+                    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Toggle dark mode">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                    <div>
+                        <p class="text-sm">Daily Target</p>
+                        <p class="text-xl font-bold" id="header-target">1,550 kcal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="shadow-sm sticky top-[72px] z-40" style="background-color: var(--bg-secondary);">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-6 overflow-x-auto">
+                <button class="tab-button active py-3 px-2 font-medium whitespace-nowrap" data-tab="daily" style="color: var(--text-secondary);">
+                    📅 Daily Plan
+                </button>
+                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="weekly" style="color: var(--text-secondary);">
+                    📋 4-Week Menu
+                </button>
+                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="dining" style="color: var(--text-secondary);">
+                    🍽️ Dining Out
+                </button>
+                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="macros" style="color: var(--text-secondary);">
+                    📊 Macro Targets
+                </button>
+                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="progress" style="color: var(--text-secondary);">
+                    📈 Weight Progress
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6 pb-20">
+        <!-- Daily View Tab -->
+        <div id="daily-tab" class="tab-content">
+            <!-- Date Selector -->
+            <div class="mb-6">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-600">Start Date</p>
+                            <p class="font-bold text-green-700">March 16, 2025</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600" id="timeline-label">Target Date (12 weeks)</p>
+                            <p class="font-bold text-green-700" id="target-date">June 8, 2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Select Date</label>
+                <div class="flex gap-2">
+                    <input type="date" id="date-selector"
+                           class="flex-1 rounded-lg px-4 py-2"
+                           style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color);"
+                           min="2025-03-16">
+                    <button id="today-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                        Today
+                    </button>
+                </div>
+                <p class="text-xs mt-2" style="color: var(--text-secondary);" id="selected-date-info">Select a date to view your meal plan</p>
+            </div>
+
+            <!-- Weight & Calorie Bank Card -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <!-- Weight Tracker -->
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg shadow-lg p-6 text-white">
+                    <h2 class="text-xl font-bold mb-4">Weight Tracker</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <input type="number" id="weight-input" step="0.1" placeholder="Enter weight (kg)"
+                                   class="flex-1 px-4 py-2 rounded-lg font-medium"
+                                   style="background-color: rgba(255,255,255,0.9); color: #1f2937;">
+                            <button id="save-weight-btn"
+                                    class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-medium whitespace-nowrap">
+                                Save
+                            </button>
+                        </div>
+                        <div id="current-weight-display" class="bg-white/20 rounded-lg p-3 text-center">
+                            <p class="text-sm opacity-80">Current Weight</p>
+                            <p class="text-3xl font-bold" id="current-weight">--</p>
+                            <p class="text-xs opacity-70" id="weight-date">No data yet</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-white/20 rounded p-2">
+                                <p class="opacity-70 text-xs">Target</p>
+                                <p class="font-bold">77 kg</p>
+                            </div>
+                            <div class="bg-white/20 rounded p-2">
+                                <p class="opacity-70 text-xs">To Go</p>
+                                <p class="font-bold" id="weight-to-go">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calorie Bank -->
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">Calorie Bank</h2>
+                        <button id="reset-day-btn" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full">
+                            Reset Day
+                        </button>
+                    </div>
+                    <div class="text-center mb-4">
+                        <p class="text-5xl font-bold mb-2" id="bank-remaining">1550</p>
+                        <p class="text-sm opacity-90">Calories Remaining</p>
+                        <div class="mt-3 bg-white/20 rounded-full h-3 overflow-hidden">
+                            <div id="bank-progress" class="bg-white h-full transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="bg-white/20 rounded-lg p-3">
+                            <p class="opacity-80">Target</p>
+                            <p class="text-xl font-bold">1,550</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-3">
+                            <p class="opacity-80">Consumed</p>
+                            <p class="text-xl font-bold" id="bank-consumed">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Summary Card -->
+            <div class="rounded-lg shadow-md p-5 mb-6" style="background-color: var(--bg-secondary);">
+                <h2 class="text-lg font-bold mb-4" style="color: var(--text-primary);">Today's Macros</h2>
+                <div class="grid grid-cols-4 gap-3 text-center">
+                    <div>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary);" id="total-cals">0</p>
+                        <p class="text-xs" style="color: var(--text-secondary);">Planned</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-green-600" id="total-protein">0g</p>
+                        <p class="text-xs" style="color: var(--text-secondary);">Protein</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-yellow-600" id="total-fat">0g</p>
+                        <p class="text-xs" style="color: var(--text-secondary);">Fat</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-blue-600" id="total-carbs">0g</p>
+                        <p class="text-xs" style="color: var(--text-secondary);">Carbs</p>
+                    </div>
+                </div>
+
+                <!-- Macro Progress Bars -->
+                <div class="mt-4 space-y-2">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>Protein</span>
+                            <span id="protein-percent">0%</span>
+                        </div>
+                        <div class="rounded-full h-2" style="background-color: var(--bg-tertiary);">
+                            <div class="macro-bar bg-green-500" id="protein-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>Fat</span>
+                            <span id="fat-percent">0%</span>
+                        </div>
+                        <div class="rounded-full h-2" style="background-color: var(--bg-tertiary);">
+                            <div class="macro-bar bg-yellow-500" id="fat-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>Carbs</span>
+                            <span id="carbs-percent">0%</span>
+                        </div>
+                        <div class="rounded-full h-2" style="background-color: var(--bg-tertiary);">
+                            <div class="macro-bar bg-blue-500" id="carbs-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Custom Food -->
+            <div class="rounded-lg shadow-md p-5 mb-6" style="background-color: var(--bg-secondary);">
+                <h3 class="font-bold text-lg mb-3" style="color: var(--text-primary);">Add Custom Food/Drink</h3>
+                <div class="space-y-3">
+                    <input type="text" id="custom-food-name" placeholder="Food/drink name"
+                           class="w-full rounded-lg px-4 py-2"
+                           style="background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+                    <div class="grid grid-cols-4 gap-2">
+                        <input type="number" id="custom-calories" placeholder="Calories"
+                               class="rounded-lg px-3 py-2"
+                               style="background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+                        <input type="number" id="custom-protein" placeholder="Protein (g)"
+                               class="rounded-lg px-3 py-2"
+                               style="background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+                        <input type="number" id="custom-fat" placeholder="Fat (g)"
+                               class="rounded-lg px-3 py-2"
+                               style="background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+                        <input type="number" id="custom-carbs" placeholder="Carbs (g)"
+                               class="rounded-lg px-3 py-2"
+                               style="background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+                    </div>
+                    <button id="add-custom-btn"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg">
+                        Add to Today
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Items List -->
+            <div id="custom-items-container" class="mb-6">
+                <!-- Custom items will be shown here -->
+            </div>
+
+            <!-- Meals Container -->
+            <div id="meals-container" class="space-y-4">
+                <!-- Meals will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Weekly Menu Tab -->
+        <div id="weekly-tab" class="tab-content hidden">
+            <div class="rounded-lg shadow-md p-5" style="background-color: var(--bg-secondary);">
+                <h2 class="text-xl font-bold mb-4" style="color: var(--text-primary);">4-Week Rotating Menu</h2>
+                <p class="text-sm mb-4" style="color: var(--text-secondary);">All meals designed for "cook once, eat twice" - dinner becomes tomorrow's lunch!</p>
+
+                <div id="weekly-menu-container">
+                    <!-- Weekly menu will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dining Out Tab -->
+        <div id="dining-tab" class="tab-content hidden">
+            <div class="rounded-lg shadow-md p-5 mb-4" style="background-color: var(--bg-secondary);">
+                <h2 class="text-xl font-bold mb-4" style="color: var(--text-primary);">🍽️ Dining Out Strategies</h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-bold text-green-600 mb-2">General Rules</h3>
+                        <ul class="space-y-2 text-sm" style="color: var(--text-primary);">
+                            <li class="flex items-start">
+                                <span class="mr-2">✓</span>
+                                <span><strong>Protein First:</strong> Order protein-heavy dishes (grilled chicken, fish, steak, tofu)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">✓</span>
+                                <span><strong>Skip the Bread Basket:</strong> Save 200-300 calories easily</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">✓</span>
+                                <span><strong>Sauce on Side:</strong> Control hidden calories in dressings/sauces</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">✓</span>
+                                <span><strong>Vegetable Swap:</strong> Replace fries with salad or steamed veggies</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2">✓</span>
+                                <span><strong>Alcohol Strategy:</strong> Stick to 1-2 drinks max (wine/spirits over beer)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-green-600 mb-2">Safe Bet Meals by Cuisine</h3>
+
+                        <div class="space-y-3">
+                            <div class="border-l-4 border-green-500 pl-3">
+                                <h4 class="font-semibold" style="color: var(--text-primary);">Italian 🇮🇹</h4>
+                                <p class="text-sm" style="color: var(--text-secondary);">Grilled fish/chicken, Caprese salad, minestrone soup. Avoid: creamy pastas, pizza.</p>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-3">
+                                <h4 class="font-semibold" style="color: var(--text-primary);">Asian 🍜</h4>
+                                <p class="text-sm" style="color: var(--text-secondary);">Sashimi, pho (skip noodles), stir-fry with veggies. Avoid: fried rice, tempura.</p>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-3">
+                                <h4 class="font-semibold" style="color: var(--text-primary);">Mexican 🌮</h4>
+                                <p class="text-sm" style="color: var(--text-secondary);">Fajitas (skip tortillas), ceviche, grilled protein bowls. Avoid: chips, quesadillas.</p>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-3">
+                                <h4 class="font-semibold" style="color: var(--text-primary);">American 🍔</h4>
+                                <p class="text-sm" style="color: var(--text-secondary);">Bunless burger, grilled chicken salad, steak with veggies. Avoid: fries, milkshakes.</p>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-3">
+                                <h4 class="font-semibold" style="color: var(--text-primary);">Indian 🍛</h4>
+                                <p class="text-sm" style="color: var(--text-secondary);">Tandoori chicken, dal, veggie curry (less rice). Avoid: naan, samosas, creamy korma.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-green-600 mb-2">Office Lunch Scenarios</h3>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <p class="text-sm mb-2" style="color: var(--text-primary);"><strong>Unexpected Team Lunch?</strong></p>
+                            <ul class="text-sm space-y-1" style="color: var(--text-primary);">
+                                <li>• Skip breakfast snacks to bank 200-300 calories</li>
+                                <li>• Order a "safe bet" from the list above</li>
+                                <li>• Eat half portion, save rest for later</li>
+                                <li>• Have light dinner (salad + protein shake)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-green-600 mb-2">Quick Calorie Reference</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-red-50 p-2 rounded">🚫 Beer (500ml): ~200 kcal</div>
+                            <div class="bg-green-50 p-2 rounded">✓ Wine (150ml): ~120 kcal</div>
+                            <div class="bg-red-50 p-2 rounded">🚫 Caesar Salad: ~400 kcal</div>
+                            <div class="bg-green-50 p-2 rounded">✓ Garden Salad: ~150 kcal</div>
+                            <div class="bg-red-50 p-2 rounded">🚫 Pasta Carbonara: ~800 kcal</div>
+                            <div class="bg-green-50 p-2 rounded">✓ Grilled Salmon: ~350 kcal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Macros Tab -->
+        <div id="macros-tab" class="tab-content hidden">
+            <div class="rounded-lg shadow-md p-5" style="background-color: var(--bg-secondary);">
+                <h2 class="text-xl font-bold mb-4" style="color: var(--text-primary);">📊 Your Macro Targets</h2>
+
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-lg mb-3">Daily Targets</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Calories</p>
+                                <p class="text-3xl font-bold text-gray-800">1,550</p>
+                                <p class="text-xs text-gray-500">500 kcal deficit</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Weight Loss Goal</p>
+                                <p class="text-3xl font-bold text-green-600">0.5kg</p>
+                                <p class="text-xs text-gray-500">per week</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-green-700">Protein</h4>
+                                <span class="text-sm" style="color: var(--text-secondary);">36% of calories</span>
+                            </div>
+                            <p class="text-2xl font-bold" style="color: var(--text-primary);">140g</p>
+                            <p class="text-sm" style="color: var(--text-secondary);">560 kcal • 1.8g per kg target weight</p>
+                            <p class="text-xs mt-2" style="color: var(--text-secondary);">Why: Muscle retention + satiety during deficit</p>
+                        </div>
+
+                        <div class="border-l-4 border-yellow-500 pl-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-yellow-700">Fat</h4>
+                                <span class="text-sm" style="color: var(--text-secondary);">29% of calories</span>
+                            </div>
+                            <p class="text-2xl font-bold" style="color: var(--text-primary);">50g</p>
+                            <p class="text-sm" style="color: var(--text-secondary);">450 kcal • Healthy minimum</p>
+                            <p class="text-xs mt-2" style="color: var(--text-secondary);">Why: Hormone production + nutrient absorption</p>
+                        </div>
+
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-blue-700">Carbs</h4>
+                                <span class="text-sm" style="color: var(--text-secondary);">35% of calories</span>
+                            </div>
+                            <p class="text-2xl font-bold" style="color: var(--text-primary);">135g</p>
+                            <p class="text-sm" style="color: var(--text-secondary);">540 kcal • Remaining calories</p>
+                            <p class="text-xs mt-2" style="color: var(--text-secondary);">Why: Energy for daily activities + brain function</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2" style="color: var(--text-primary);">Pro Tips</h4>
+                        <ul class="text-sm space-y-1" style="color: var(--text-primary);">
+                            <li>• Prioritize protein at each meal (keeps you full longer)</li>
+                            <li>• Don't fear healthy fats (olive oil, nuts, avocado)</li>
+                            <li>• Time carbs around work productivity needs</li>
+                            <li>• Track consistently for first 2 weeks to learn portions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tab -->
+        <div id="progress-tab" class="tab-content hidden">
+            <div class="rounded-lg shadow-md p-5 mb-6" style="background-color: var(--bg-secondary);">
+                <h2 class="text-xl font-bold mb-4" style="color: var(--text-primary);">📈 Weight Progress</h2>
+
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                        <p class="text-sm mb-1" style="color: var(--text-secondary);">Starting</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary);" id="stats-start-weight">83 kg</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                        <p class="text-sm mb-1" style="color: var(--text-secondary);">Current</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary);" id="stats-current-weight">-- kg</p>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                        <p class="text-sm mb-1" style="color: var(--text-secondary);">Target</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary);" id="stats-target-weight">77 kg</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-4 text-white text-center">
+                        <p class="text-sm opacity-90 mb-1">Total Lost</p>
+                        <p class="text-3xl font-bold" id="stats-total-lost">-- kg</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg p-4 text-white text-center">
+                        <p class="text-sm opacity-90 mb-1">Remaining</p>
+                        <p class="text-3xl font-bold" id="stats-remaining">-- kg</p>
+                    </div>
+                </div>
+
+                <!-- Weight Graph -->
+                <div class="rounded-lg p-4 mb-4" style="background-color: var(--bg-tertiary);">
+                    <h3 class="font-bold mb-3" style="color: var(--text-primary);">Weight Trend</h3>
+                    <canvas id="weight-chart" width="400" height="250"></canvas>
+                </div>
+
+                <!-- Weight History -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold" style="color: var(--text-primary);">Weight Log</h3>
+                        <button id="clear-history-btn" class="text-xs text-red-600 hover:text-red-700 underline">
+                            Clear All History
+                        </button>
+                    </div>
+                    <div id="weight-history" class="space-y-2 max-h-96 overflow-y-auto">
+                        <!-- Weight entries will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
