@@ -751,33 +751,42 @@ const MEAL_PLAN = {
             ]
         }
     },
-    2: { // Week 2
+    2: { // Week 2 - Tunisian Focus 🇹🇳
         1: { // Sunday
             isBusinessDay: true,
             meals: [
                 {
-                    name: "Shakshuka",
+                    name: "Ojja (Shakshuka with Merguez)",
                     type: "Breakfast (10:00 AM)",
-                    calories: 360,
-                    protein: 28,
-                    fat: 18,
-                    carbs: 22,
-                    recipe: "3 eggs poached in spiced tomato sauce with peppers, onions. Serve with 1 slice bread.",
-                    prepNote: "One-pan breakfast, 20 mins"
+                    calories: 1000,
+                    protein: 50,
+                    fat: 65,
+                    carbs: 45,
+                    recipe: "6 eggs, 4-6 Merguez sausages, tomato paste, garlic, harissa, peppers",
+                    prepNote: "Fast Tunisian breakfast. Low carb but high fat due to Merguez. Dip bread sparingly."
                 },
                 {
-                    name: "Teriyaki Chicken with Broccoli",
+                    name: "Couscous (Standard)",
                     type: "Dinner (6:00 PM) → Lunch Tomorrow",
-                    calories: 510,
-                    protein: 56,
-                    fat: 14,
-                    carbs: 42,
-                    recipe: "Chicken breast (280g) with homemade teriyaki sauce (low sugar), steamed broccoli, brown rice (70g dry).",
-                    prepNote: "Make teriyaki: soy sauce, ginger, garlic, honey (1 tsp)"
+                    calories: 1400,
+                    protein: 70,
+                    fat: 45,
+                    carbs: 180,
+                    recipe: "500g dry couscous, 300g chicken or beef, chickpeas, carrots, zucchini, pumpkin",
+                    prepNote: "Steam couscous over the sauce. Divide strictly by the PWA's portion scaler. Tunisian staple!"
                 }
             ],
             snacks: [
-                {name: "Greek Yogurt + Berries", time: "2:00 PM", calories: 180, protein: 20, fat: 3, carbs: 18, recipe: "200g Greek yogurt, berries"},
+                {
+                    name: "Salade Mechouia",
+                    time: "2:00 PM",
+                    calories: 350,
+                    protein: 8,
+                    fat: 28,
+                    carbs: 18,
+                    recipe: "Grilled peppers, tomatoes, garlic, caraway, topped with 1 can tuna and 2 boiled eggs",
+                    prepNote: "Side/Starter. Grill and mash vegetables. The olive oil is the caloric driver here; measure it carefully."
+                },
                 {name: "Apple + Almonds", time: "4:00 PM", calories: 200, protein: 6, fat: 9, carbs: 25, recipe: "Apple + 15 almonds"},
                 {name: "Protein Coffee", time: "10:30 AM", calories: 120, protein: 20, fat: 2, carbs: 6, recipe: "Coffee with protein"}
             ]
@@ -785,20 +794,56 @@ const MEAL_PLAN = {
         2: { // Monday
             isBusinessDay: true,
             meals: [
-                {name: "Protein Pancakes", type: "Breakfast (10:00 AM)", calories: 400, protein: 35, fat: 12, carbs: 38, recipe: "Pancakes from protein powder, oats, egg whites, banana. Top with berries.", prepNote: "Can batch cook and freeze"},
-                {name: "Teriyaki Chicken with Broccoli (from Sunday)", type: "Office Lunch (1:00 PM)", calories: 510, protein: 56, fat: 14, carbs: 42, recipe: "Reheated from Sunday", prepNote: "Already prepped!"},
-                {name: "Lemon Herb Cod with Quinoa", type: "Dinner (7:00 PM) → Lunch Tomorrow", calories: 490, protein: 50, fat: 16, carbs: 38, recipe: "Cod fillet (250g) with lemon and herbs, roasted asparagus, quinoa (80g dry), cherry tomatoes.", prepNote: "Fish cooks in 12-15 mins at 180°C"}
+                {
+                    name: "Plat Tunisien",
+                    type: "Breakfast (10:00 AM)",
+                    calories: 900,
+                    protein: 45,
+                    fat: 35,
+                    carbs: 100,
+                    recipe: "Cucumber/tomato salad, olives, 2 eggs, 150g tuna, harissa, and 100g bread per person",
+                    prepNote: "Great '5-minute assembly' for the wife. Adjust bread portion to control calories."
+                },
+                {name: "Couscous (from Sunday)", type: "Office Lunch (1:00 PM)", calories: 1400, protein: 70, fat: 45, carbs: 180, recipe: "Reheated couscous from Sunday", prepNote: "Already prepped!"},
+                {
+                    name: "Lablabi",
+                    type: "Dinner (7:00 PM) → Lunch Tomorrow",
+                    calories: 1300,
+                    protein: 55,
+                    fat: 40,
+                    carbs: 180,
+                    recipe: "400g chickpeas (cooked), 2 eggs, 100g stale bread chunks, cumin, harissa, plenty of olive oil",
+                    prepNote: "Heavy main. High fiber and very filling. The chickpeas provide a massive carb/protein base."
+                }
             ],
             snacks: [
-                {name: "Cottage Cheese Bowl", time: "11:00 AM", calories: 200, protein: 28, fat: 4, carbs: 12, recipe: "200g cottage cheese, veggies"},
-                {name: "Protein Bar", time: "4:00 PM", calories: 200, protein: 20, fat: 8, carbs: 18, recipe: "Quality protein bar"}
+                {
+                    name: "Brik (Egg & Tuna)",
+                    time: "11:00 AM",
+                    calories: 500,
+                    protein: 24,
+                    fat: 32,
+                    carbs: 30,
+                    recipe: "2 sheets Malsouka, 2 eggs, 50g tuna, parsley, capers, deep-fried",
+                    prepNote: "Side Dish. Each Brik is ~250kcal. Air-fry instead of deep-frying to cut fat by 50%."
+                },
+                {
+                    name: "Tunisian Appetizer (Kemia Style)",
+                    time: "4:00 PM",
+                    calories: 600,
+                    protein: 20,
+                    fat: 40,
+                    carbs: 40,
+                    recipe: "Small baguette, 2 tbsp olive oil, 1 tbsp harissa, 50g tuna, olives",
+                    prepNote: "Snack/Social. Dangerous for a deficit! Easy to overeat. Log before you start dipping."
+                }
             ]
         },
         3: { // Tuesday
             isBusinessDay: true,
             meals: [
                 {name: "Breakfast Hash", type: "Breakfast (10:00 AM)", calories: 420, protein: 30, fat: 20, carbs: 32, recipe: "Diced sweet potato, turkey sausage, peppers, onions, 2 eggs on top.", prepNote: "One-pan meal"},
-                {name: "Lemon Herb Cod with Quinoa (from Monday)", type: "Office Lunch (1:00 PM)", calories: 490, protein: 50, fat: 16, carbs: 38, recipe: "Reheated from Monday", prepNote: "Already prepped!"},
+                {name: "Lablabi (from Monday)", type: "Office Lunch (1:00 PM)", calories: 1300, protein: 55, fat: 40, carbs: 180, recipe: "Reheated from Monday", prepNote: "Already prepped! Tunisian comfort food 🇹🇳"},
                 {name: "Turkey Meatballs with Zoodles", type: "Dinner (6:30 PM) → Lunch Tomorrow", calories: 480, protein: 54, fat: 18, carbs: 28, recipe: "Turkey meatballs (280g turkey) with marinara sauce, zucchini noodles, Parmesan cheese (10g).", prepNote: "Bake meatballs 20 mins at 190°C"}
             ],
             snacks: [
