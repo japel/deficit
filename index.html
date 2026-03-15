@@ -174,12 +174,6 @@
                 <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="weekly" style="color: var(--text-secondary);">
                     📋 4-Week Menu
                 </button>
-                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="dining" style="color: var(--text-secondary);">
-                    🍽️ Dining Out
-                </button>
-                <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="macros" style="color: var(--text-secondary);">
-                    📊 Macro Targets
-                </button>
                 <button class="tab-button py-3 px-2 font-medium whitespace-nowrap" data-tab="progress" style="color: var(--text-secondary);">
                     📈 Weight Progress
                 </button>
@@ -450,9 +444,9 @@
 
                     <div>
                         <h3 class="font-bold text-green-600 mb-2">Office Lunch Scenarios</h3>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                            <p class="text-sm mb-2" style="color: var(--text-primary);"><strong>Unexpected Team Lunch?</strong></p>
-                            <ul class="text-sm space-y-1" style="color: var(--text-primary);">
+                        <div class="bg-slate-700 border border-slate-600 rounded-lg p-3">
+                            <p class="text-sm mb-2 text-slate-100"><strong>Unexpected Team Lunch?</strong></p>
+                            <ul class="text-sm space-y-1 text-slate-200">
                                 <li>• Skip breakfast snacks to bank 200-300 calories</li>
                                 <li>• Order a "safe bet" from the list above</li>
                                 <li>• Eat half portion, save rest for later</li>
@@ -596,6 +590,40 @@
             </div>
         </div>
     </main>
+
+    <!-- Bottom Resources Section -->
+    <footer class="border-t py-8 mt-8" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+        <div class="container mx-auto px-4">
+            <h3 class="text-lg font-bold mb-4" style="color: var(--text-primary);">📚 Additional Resources</h3>
+            <div class="space-y-4">
+                <!-- Dining Out Guide -->
+                <div class="rounded-lg p-4" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color);">
+                    <details class="group">
+                        <summary class="font-semibold cursor-pointer mb-2 flex items-center justify-between list-none" style="color: var(--text-primary);">
+                            <span>🍽️ Dining Out Strategies</span>
+                            <span class="text-xl transition-transform group-open:rotate-180">▼</span>
+                        </summary>
+                        <div id="dining-content-footer" class="text-sm mt-3" style="color: var(--text-secondary);">
+                            <!-- Content will be copied from dining tab -->
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Macro Targets -->
+                <div class="rounded-lg p-4" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color);">
+                    <details class="group">
+                        <summary class="font-semibold cursor-pointer mb-2 flex items-center justify-between list-none" style="color: var(--text-primary);">
+                            <span>📊 Your Macro Targets</span>
+                            <span class="text-xl transition-transform group-open:rotate-180">▼</span>
+                        </summary>
+                        <div id="macros-content-footer" class="text-sm mt-3" style="color: var(--text-secondary);">
+                            <!-- Content will be copied from macros tab -->
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
 </body>
