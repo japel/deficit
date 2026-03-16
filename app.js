@@ -3734,6 +3734,12 @@ function updateWeightDisplay() {
     const weightGoals = getCurrentWeightGoals();
     const weightHistory = getWeightData();
 
+    // Always update target weight on the card
+    const targetCardEl = document.getElementById('weight-target-card');
+    if (targetCardEl) {
+        targetCardEl.textContent = weightGoals.target + ' kg';
+    }
+
     if (weightHistory.length === 0) {
         document.getElementById('current-weight').textContent = '--';
         document.getElementById('weight-date').textContent = 'No data yet';
